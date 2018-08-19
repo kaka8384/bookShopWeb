@@ -71,7 +71,7 @@ const proxy = {
   'GET /api/fake_chart_data': getFakeChartData,
   'GET /api/profile/basic': getProfileBasicData,
   'GET /api/profile/advanced': getProfileAdvancedData,
-  'POST /api/login/account': (req, res) => {
+  'POST /api/UserLogin': (req, res) => {
     const { password, userName, type } = req.body;
     if (password === '888888' && userName === 'admin') {
       res.send({
@@ -136,39 +136,88 @@ const proxy = {
     });
   },
 
-'GET /api/CatgeoryByPage':{
-  "success": true,
-  "list": [
-      {
-          "_id": "5b56ce45934ae62dcc24037b",
-          "name": "历史",
-          "updated": "2018-07-24T06:59:17.416Z",
-          "__v": 0
-      },
-      {
-          "_id": "5b56ce5a934ae62dcc24037c",
-          "name": "古典小说",
-          "updated": "2018-07-24T06:59:38.466Z",
-          "__v": 0
-      },
-      {
-          "_id": "5b57e09d0964d9892c8f9c75",
-          "name": "社会科学",
-          "updated": "2018-07-25T02:29:49.612Z",
-          "__v": 0
-      },
-      {
-          "_id": "5b738c1a590ebc0f986cbf40",
-          "name": "传记",
-          "updated": "2018-08-15T02:12:42.524Z",
-          "__v": 0
-      }
-  ],
-  "page": {
-      "total": 4,
-      "current": "1"
-  }
-}
+  // 'GET /api/CatgeoryByPage':{
+  //   "success": true,
+  //   "list": [
+  //       {
+  //           "_id": "5b56ce45934ae62dcc24037b",
+  //           "name": "历史",
+  //           "updated": "2018-07-24T06:59:17.416Z",
+  //           "__v": 0
+  //       },
+  //       {
+  //           "_id": "5b56ce5a934ae62dcc24037c",
+  //           "name": "古典小说",
+  //           "updated": "2018-07-24T06:59:38.466Z",
+  //           "__v": 0
+  //       },
+  //       {
+  //           "_id": "5b57e09d0964d9892c8f9c75",
+  //           "name": "社会科学",
+  //           "updated": "2018-07-25T02:29:49.612Z",
+  //           "__v": 0
+  //       },
+  //       {
+  //           "_id": "5b738c1a590ebc0f986cbf40",
+  //           "name": "传记",
+  //           "updated": "2018-08-15T02:12:42.524Z",
+  //           "_v_": 0
+  //       },
+  //       {
+  //         "_id": "5b56ce45934ae62dcc24037b",
+  //         "name": "历史",
+  //         "updated": "2018-07-24T06:59:17.416Z",
+  //         "__v": 0
+  //     },
+  //     {
+  //         "_id": "5b56ce5a934ae62dcc24037c",
+  //         "name": "古典小说",
+  //         "updated": "2018-07-24T06:59:38.466Z",
+  //         "__v": 0
+  //     },
+  //     {
+  //         "_id": "5b57e09d0964d9892c8f9c75",
+  //         "name": "社会科学",
+  //         "updated": "2018-07-25T02:29:49.612Z",
+  //         "__v": 0
+  //     },
+  //     {
+  //         "_id": "5b738c1a590ebc0f986cbf40",
+  //         "name": "传记",
+  //         "updated": "2018-08-15T02:12:42.524Z",
+  //         "_v_": 0
+  //     },
+  //     {
+  //       "_id": "5b56ce45934ae62dcc24037b",
+  //       "name": "历史",
+  //       "updated": "2018-07-24T06:59:17.416Z",
+  //       "__v": 0
+  //   },
+  //   {
+  //       "_id": "5b56ce5a934ae62dcc24037c",
+  //       "name": "古典小说",
+  //       "updated": "2018-07-24T06:59:38.466Z",
+  //       "__v": 0
+  //   },
+  //   {
+  //       "_id": "5b57e09d0964d9892c8f9c75",
+  //       "name": "社会科学",
+  //       "updated": "2018-07-25T02:29:49.612Z",
+  //       "__v": 0
+  //   },
+  //   {
+  //       "_id": "5b738c1a590ebc0f986cbf40",
+  //       "name": "传记",
+  //       "updated": "2018-08-15T02:12:42.524Z",
+  //       "_v_": 0
+  //   }
+  //   ],
+  //   "pagination": {
+  //       "total": 12,
+  //       // "pageSize":10,
+  //       "current": 1
+  //   }
+  // }
 };
 
 export default (noProxy ? {} : delay(proxy, 1000));

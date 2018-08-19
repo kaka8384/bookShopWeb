@@ -74,6 +74,7 @@ export default function request(url, options) {
       if (newOptions.method === 'DELETE' || response.status === 204) {
         return response.text();
       }
+
       return response.json();
     })
     .catch(e => {

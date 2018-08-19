@@ -1,36 +1,17 @@
 import React, { PureComponent, Fragment } from 'react';
 import { connect } from 'dva';
 import moment from 'moment';
-import {
-  Row,
-  Col,
-  Card,
-  Form,
-  Input,
-  Select,
-  Icon,
-  Button,
-  Dropdown,
-  Menu,
-  InputNumber,
-  DatePicker,
-  Modal,
-  message,
-  Divider,
-} from 'antd';
+import { Row, Col, Card, Form, Input, Button, Modal, message, Divider } from 'antd';
 import StandardTable from 'components/StandardTable';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 
 import styles from './Category.less';
 
 const FormItem = Form.Item;
-const { Option } = Select;
 const getValue = obj =>
   Object.keys(obj)
     .map(key => obj[key])
     .join(',');
-// const statusMap = ['default', 'processing', 'success', 'error'];
-// const status = ['关闭', '运行中', '已上线', '异常'];
 
 const CreateForm = Form.create()(props => {
   const { modalVisible, form, handleAdd, handleModalVisible } = props;
@@ -48,9 +29,9 @@ const CreateForm = Form.create()(props => {
       onOk={okHandle}
       onCancel={() => handleModalVisible()}
     >
-      <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 15 }} label="描述">
-        {form.getFieldDecorator('desc', {
-          rules: [{ required: true, message: 'Please input some description...' }],
+      <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 15 }} label="分类名称">
+        {form.getFieldDecorator('name', {
+          rules: [{ required: true, message: '请输入分类名称...' }],
         })(<Input placeholder="请输入" />)}
       </FormItem>
     </Modal>
@@ -163,7 +144,7 @@ export default class Category extends PureComponent {
 
       const values = {
         ...fieldsValue,
-        updatedAt: fieldsValue.updatedAt && fieldsValue.updatedAt.valueOf(),
+        // updated: fieldsValue.updated && fieldsValue.updated.valueOf(),
       };
 
       this.setState({
@@ -188,7 +169,7 @@ export default class Category extends PureComponent {
     dispatch({
       type: 'category/add',
       payload: {
-        description: fields.desc,
+        name: fields.name,
       },
     });
 
@@ -207,7 +188,7 @@ export default class Category extends PureComponent {
         <Row gutter={{ md: 8, lg: 24, xl: 48 }}>
           <Col md={8} sm={24}>
             <FormItem label="分类名称">
-              {getFieldDecorator('no')(<Input placeholder="请输入" />)}
+              {getFieldDecorator('name')(<Input placeholder="请输入" />)}
             </FormItem>
           </Col>
           {/* <Col md={8} sm={24}>
@@ -228,13 +209,17 @@ export default class Category extends PureComponent {
               <Button style={{ marginLeft: 8 }} onClick={this.handleFormReset}>
                 重置
               </Button>
-              <Button style={{ marginLeft: 8 }} icon="plus" type="primary" onClick={() => this.handleModalVisible(true)}>
+              <Button
+                style={{ marginLeft: 8 }}
+                icon="plus"
+                type="primary"
+                onClick={() => this.handleModalVisible(true)}
+              >
                 新建
               </Button>
               {selectedRows.length > 0 && (
                 <span>
                   <Button style={{ marginLeft: 8 }}>批量删除</Button>
-            
                 </span>
               )}
               {/* <a style={{ marginLeft: 8 }} onClick={this.toggleForm}>
@@ -338,45 +323,7 @@ export default class Category extends PureComponent {
         title: '分类名称',
         dataIndex: 'name',
       },
-      // {
-      //   title: '描述',
-      //   dataIndex: 'description',
-      // },
-      // {
-      //   title: '服务调用次数',
-      //   dataIndex: 'callNo',
-      //   sorter: true,
-      //   align: 'right',
-      //   render: val => `${val} 万`,
-      //   // mark to display a total number
-      //   needTotal: true,
-      // },
-      // {
-      //   title: '状态',
-      //   dataIndex: 'status',
-      //   filters: [
-      //     {
-      //       text: status[0],
-      //       value: 0,
-      //     },
-      //     {
-      //       text: status[1],
-      //       value: 1,
-      //     },
-      //     {
-      //       text: status[2],
-      //       value: 2,
-      //     },
-      //     {
-      //       text: status[3],
-      //       value: 3,
-      //     },
-      //   ],
-      //   onFilter: (value, record) => record.status.toString() === value,
-      //   render(val) {
-      //     return <Badge status={statusMap[val]} text={status[val]} />;
-      //   },
-      // },
+
       {
         title: '更新时间',
         dataIndex: 'updated',
@@ -412,10 +359,7 @@ export default class Category extends PureComponent {
         <Card bordered={false}>
           <div className={styles.tableList}>
             <div className={styles.tableListForm}>{this.renderForm()}</div>
-            <div className={styles.tableListOperator}>
-     
-      
-            </div>
+            <div className={styles.tableListOperator} />
             <StandardTable
               selectedRows={selectedRows}
               loading={loading}

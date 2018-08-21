@@ -13,18 +13,29 @@ const getValue = obj =>
     .map(key => obj[key])
     .join(',');
 
+//创建新增分类的Form
 const CreateForm = Form.create()(props => {
-  const { modalVisible, form, handleAdd, handleModalVisible } = props;
+  const { modalVisible, form, handleAdd, handleUpdate,handleModalVisible,modalTitle,updateData } = props;
   const okHandle = () => {
     form.validateFields((err, fieldsValue) => {
       if (err) return;
       form.resetFields();
-      handleAdd(fieldsValue);
+
+      if(updateData==={})
+      {
+        console.log("222");
+        handleAdd(fieldsValue);
+      }
+      else
+      {
+        handleUpdate(fieldsValue,updateData._id);
+      }
+
     });
   };
   return (
     <Modal
-      title="新建分类"
+      title={modalTitle}
       visible={modalVisible}
       onOk={okHandle}
       onCancel={() => handleModalVisible()}
@@ -32,6 +43,7 @@ const CreateForm = Form.create()(props => {
       <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 15 }} label="分类名称">
         {form.getFieldDecorator('name', {
           rules: [{ required: true, message: '请输入分类名称...' }],
+          initialValue: updateData.name
         })(<Input placeholder="请输入" />)}
       </FormItem>
     </Modal>
@@ -46,7 +58,8 @@ const CreateForm = Form.create()(props => {
 export default class Category extends PureComponent {
   state = {
     modalVisible: false,
-    // expandForm: false,
+    modalTitle:"",
+    updateData:{},
     selectedRows: [],
     formValues: {},
   };
@@ -58,6 +71,7 @@ export default class Category extends PureComponent {
     });
   }
 
+  //更改表排序、页数等
   handleStandardTableChange = (pagination, filtersArg, sorter) => {
     const { dispatch } = this.props;
     const { formValues } = this.state;
@@ -96,37 +110,6 @@ export default class Category extends PureComponent {
     });
   };
 
-  // toggleForm = () => {
-  //   const { expandForm } = this.state;
-  //   this.setState({
-  //     expandForm: !expandForm,
-  //   });
-  // };
-
-  // handleMenuClick = e => {
-  //   const { dispatch } = this.props;
-  //   const { selectedRows } = this.state;
-
-  //   if (!selectedRows) return;
-
-  //   switch (e.key) {
-  //     case 'remove':
-  //       dispatch({
-  //         type: 'rule/remove',
-  //         payload: {
-  //           no: selectedRows.map(row => row.no).join(','),
-  //         },
-  //         callback: () => {
-  //           this.setState({
-  //             selectedRows: [],
-  //           });
-  //         },
-  //       });
-  //       break;
-  //     default:
-  //       break;
-  //   }
-  // };
 
   handleSelectRows = rows => {
     this.setState({
@@ -158,12 +141,16 @@ export default class Category extends PureComponent {
     });
   };
 
-  handleModalVisible = flag => {
+  handleModalVisible = (flag,record) => {
+    
     this.setState({
       modalVisible: !!flag,
+      modalTitle: record?"修改分类":"新建分类",
+      updateData:record?record:{}
     });
   };
 
+  //新增分类事件
   handleAdd = fields => {
     const { dispatch } = this.props;
     dispatch({
@@ -179,6 +166,52 @@ export default class Category extends PureComponent {
     });
   };
 
+  //修改分类事件
+  handleUpdate=(fields,cid) => {
+    const { dispatch } = this.props;
+    dispatch({
+      type: 'category/update',
+      payload: {
+        name: fields.name,
+        cid:cid
+      },
+    });
+
+    message.success('修改成功');
+    this.setState({
+      modalVisible: false,
+    });
+  };
+
+  handleDelete=(categoryId)=>{
+    const { dispatch } = this.props;
+    dispatch({
+      type: 'category/remove',
+      payload: {
+        cid:categoryId
+      },
+    });
+    message.success('删除成功');
+  };
+
+  handleBatchDelete=()=>{
+    const { dispatch } = this.props;
+    const { selectedRows } = this.state;
+    if (!selectedRows) return;
+    dispatch({
+          type: 'category/batchremove',
+          payload: {
+            categoryIds: selectedRows.map(row => row._id).join(','),
+          },
+          callback: () => {
+            this.setState({
+              selectedRows: [],
+            });
+          },
+        });
+    message.success('批量删除成功');
+  }
+
   renderSimpleForm() {
     const { form } = this.props;
     const { getFieldDecorator } = form;
@@ -191,16 +224,6 @@ export default class Category extends PureComponent {
               {getFieldDecorator('name')(<Input placeholder="请输入" />)}
             </FormItem>
           </Col>
-          {/* <Col md={8} sm={24}>
-            <FormItem label="使用状态">
-              {getFieldDecorator('status')(
-                <Select placeholder="请选择" style={{ width: '100%' }}>
-                  <Option value="0">关闭</Option>
-                  <Option value="1">运行中</Option>
-                </Select>
-              )}
-            </FormItem>
-          </Col> */}
           <Col md={8} sm={24}>
             <span className={styles.submitButtons}>
               <Button type="primary" htmlType="submit">
@@ -219,91 +242,15 @@ export default class Category extends PureComponent {
               </Button>
               {selectedRows.length > 0 && (
                 <span>
-                  <Button style={{ marginLeft: 8 }}>批量删除</Button>
+                  <Button onClick={()=>this.handleBatchDelete()} style={{ marginLeft: 8 }}>批量删除</Button>
                 </span>
               )}
-              {/* <a style={{ marginLeft: 8 }} onClick={this.toggleForm}>
-                展开 <Icon type="down" />
-              </a> */}
             </span>
           </Col>
         </Row>
       </Form>
     );
   }
-
-  // renderAdvancedForm() {
-  //   const { form } = this.props;
-  //   const { getFieldDecorator } = form;
-  //   return (
-  //     <Form onSubmit={this.handleSearch} layout="inline">
-  //       <Row gutter={{ md: 8, lg: 24, xl: 48 }}>
-  //         <Col md={8} sm={24}>
-  //           <FormItem label="规则编号">
-  //             {getFieldDecorator('no')(<Input placeholder="请输入" />)}
-  //           </FormItem>
-  //         </Col>
-  //         <Col md={8} sm={24}>
-  //           <FormItem label="使用状态">
-  //             {getFieldDecorator('status')(
-  //               <Select placeholder="请选择" style={{ width: '100%' }}>
-  //                 <Option value="0">关闭</Option>
-  //                 <Option value="1">运行中</Option>
-  //               </Select>
-  //             )}
-  //           </FormItem>
-  //         </Col>
-  //         <Col md={8} sm={24}>
-  //           <FormItem label="调用次数">
-  //             {getFieldDecorator('number')(<InputNumber style={{ width: '100%' }} />)}
-  //           </FormItem>
-  //         </Col>
-  //       </Row>
-  //       <Row gutter={{ md: 8, lg: 24, xl: 48 }}>
-  //         <Col md={8} sm={24}>
-  //           <FormItem label="更新日期">
-  //             {getFieldDecorator('date')(
-  //               <DatePicker style={{ width: '100%' }} placeholder="请输入更新日期" />
-  //             )}
-  //           </FormItem>
-  //         </Col>
-  //         <Col md={8} sm={24}>
-  //           <FormItem label="使用状态">
-  //             {getFieldDecorator('status3')(
-  //               <Select placeholder="请选择" style={{ width: '100%' }}>
-  //                 <Option value="0">关闭</Option>
-  //                 <Option value="1">运行中</Option>
-  //               </Select>
-  //             )}
-  //           </FormItem>
-  //         </Col>
-  //         <Col md={8} sm={24}>
-  //           <FormItem label="使用状态">
-  //             {getFieldDecorator('status4')(
-  //               <Select placeholder="请选择" style={{ width: '100%' }}>
-  //                 <Option value="0">关闭</Option>
-  //                 <Option value="1">运行中</Option>
-  //               </Select>
-  //             )}
-  //           </FormItem>
-  //         </Col>
-  //       </Row>
-  //       <div style={{ overflow: 'hidden' }}>
-  //         <div style={{ float: 'right', marginBottom: 24 }}>
-  //           <Button type="primary" htmlType="submit">
-  //             查询
-  //           </Button>
-  //           <Button style={{ marginLeft: 8 }} onClick={this.handleFormReset}>
-  //             重置
-  //           </Button>
-  //           <a style={{ marginLeft: 8 }} onClick={this.toggleForm}>
-  //             收起 <Icon type="up" />
-  //           </a>
-  //         </div>
-  //       </div>
-  //     </Form>
-  //   );
-  // }
 
   renderForm() {
     // const { expandForm } = this.state;
@@ -316,14 +263,13 @@ export default class Category extends PureComponent {
       category: { data },
       loading,
     } = this.props;
-    const { selectedRows, modalVisible } = this.state;
+    const { selectedRows, modalVisible,modalTitle,updateData } = this.state;
 
     const columns = [
       {
         title: '分类名称',
         dataIndex: 'name',
       },
-
       {
         title: '更新时间',
         dataIndex: 'updated',
@@ -332,11 +278,11 @@ export default class Category extends PureComponent {
       },
       {
         title: '操作',
-        render: () => (
+        render: (text,record) => (
           <Fragment>
-            <a href="">修改</a>
+            <a href="javascript:void(0);" onClick={() => this.handleModalVisible(true,record)}>修改</a>
             <Divider type="vertical" />
-            <a href="">删除</a>
+            <a href="javascript:void(0);" onClick={() => this.handleDelete(record._id)}>删除</a>
           </Fragment>
         ),
       },
@@ -351,6 +297,7 @@ export default class Category extends PureComponent {
 
     const parentMethods = {
       handleAdd: this.handleAdd,
+      handleUpdate:this.handleUpdate,
       handleModalVisible: this.handleModalVisible,
     };
 
@@ -367,10 +314,11 @@ export default class Category extends PureComponent {
               columns={columns}
               onSelectRow={this.handleSelectRows}
               onChange={this.handleStandardTableChange}
+              rowKey={record => record._id}
             />
           </div>
         </Card>
-        <CreateForm {...parentMethods} modalVisible={modalVisible} />
+        <CreateForm {...parentMethods} modalVisible={modalVisible} modalTitle={modalTitle} updateData={updateData} />
       </PageHeaderLayout>
     );
   }

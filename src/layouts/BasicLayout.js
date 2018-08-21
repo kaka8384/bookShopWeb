@@ -131,7 +131,7 @@ export default class BasicLayout extends React.PureComponent {
   getPageTitle() {
     const { routerData, location } = this.props;
     const { pathname } = location;
-    let title = '后台管理';
+    let title = '天天书城后台管理系统';
     let currRouterData = null;
     // match params path
     Object.keys(routerData).forEach(key => {
@@ -140,7 +140,7 @@ export default class BasicLayout extends React.PureComponent {
       }
     });
     if (currRouterData && currRouterData.name) {
-      title = `${currRouterData.name} - Ant Design Pro`;
+      title = `${currRouterData.name} - 天天书城后台管理系统`;
     }
     return title;
   }
@@ -185,10 +185,10 @@ export default class BasicLayout extends React.PureComponent {
 
   handleMenuClick = ({ key }) => {
     const { dispatch } = this.props;
-    if (key === 'triggerError') {
-      dispatch(routerRedux.push('/exception/trigger'));
-      return;
-    }
+    // if (key === 'triggerError') {
+    //   dispatch(routerRedux.push('/exception/trigger'));
+    //   return;
+    // }
     if (key === 'logout') {
       dispatch({
         type: 'login/logout',
@@ -289,7 +289,7 @@ export default class BasicLayout extends React.PureComponent {
               ]}
               copyright={
                 <Fragment>
-                  Copyright <Icon type="copyright" /> 2018 Janson Zhang出品
+                  Copyright <Icon type="copyright" /> 2018 蚂蚁金服体验技术部出品
                 </Fragment>
               }
             />

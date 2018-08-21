@@ -35,12 +35,6 @@ export default class LoginPage extends Component {
     }
   };
 
-  // changeAutoLogin = e => {
-  //   this.setState({
-  //     autoLogin: e.target.checked,
-  //   });
-  // };
-
   renderMessage = content => {
     return <Alert style={{ marginBottom: 24 }} message={content} type="error" showIcon />;
   };

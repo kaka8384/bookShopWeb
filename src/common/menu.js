@@ -1,27 +1,27 @@
 import { isUrl } from '../utils/utils';
 
 const menuData = [
-  {
-    name: 'dashboard',
-    icon: 'dashboard',
-    path: 'dashboard',
-    children: [
-      {
-        name: '分析页',
-        path: 'analysis',
-      },
-      {
-        name: '监控页',
-        path: 'monitor',
-      },
-      {
-        name: '工作台',
-        path: 'workplace',
-        // hideInBreadcrumb: true,
-        // hideInMenu: true,
-      },
-    ],
-  },
+  // {
+  //   name: 'dashboard',
+  //   icon: 'dashboard',
+  //   path: 'dashboard',
+  //   children: [
+  //     {
+  //       name: '分析页',
+  //       path: 'analysis',
+  //     },
+  //     {
+  //       name: '监控页',
+  //       path: 'monitor',
+  //     },
+  //     {
+  //       name: '工作台',
+  //       path: 'workplace',
+  //       // hideInBreadcrumb: true,
+  //       // hideInMenu: true,
+  //     },
+  //   ],
+  // },
   {
     name: '业务管理',
     icon: 'form',
@@ -29,7 +29,27 @@ const menuData = [
     children: [
       {
         name: '商品分类管理',
-        path: 'category',
+        path: 'category'
+      },
+      {
+        name: '商品管理',
+        path: 'product'
+      },
+      {
+        name: '商品评论管理',
+        path: 'product_comment'
+      },
+      {
+        name: '商品问答管理',
+        path: 'product_issue'
+      },
+      {
+        name: '订单管理',
+        path: 'order'
+      },
+      {
+        name: '网站用户管理',
+        path: 'customer'
       }
     ],
   },
@@ -121,30 +141,30 @@ const menuData = [
       },
     ],
   },
-  {
-    name: '异常页',
-    icon: 'warning',
-    path: 'exception',
-    children: [
-      {
-        name: '403',
-        path: '403',
-      },
-      {
-        name: '404',
-        path: '404',
-      },
-      {
-        name: '500',
-        path: '500',
-      },
-      {
-        name: '触发异常',
-        path: 'trigger',
-        hideInMenu: true,
-      },
-    ],
-  },
+  // {
+  //   name: '异常页',
+  //   icon: 'warning',
+  //   path: 'exception',
+  //   children: [
+  //     {
+  //       name: '403',
+  //       path: '403',
+  //     },
+  //     {
+  //       name: '404',
+  //       path: '404',
+  //     },
+  //     {
+  //       name: '500',
+  //       path: '500',
+  //     },
+  //     {
+  //       name: '触发异常',
+  //       path: 'trigger',
+  //       hideInMenu: true,
+  //     },
+  //   ],
+  // },
   {
     name: '账户',
     icon: 'user',

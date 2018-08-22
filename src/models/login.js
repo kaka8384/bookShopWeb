@@ -46,6 +46,7 @@ export default {
     },
     *logout(_, { call,put }) {
       const response = yield call(UserLogout);  //服务器端退出
+
       if (response.success) {
         yield put({
           type: 'changeLoginStatus',

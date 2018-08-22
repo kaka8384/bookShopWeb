@@ -20,17 +20,14 @@ const CreateForm = Form.create()(props => {
     form.validateFields((err, fieldsValue) => {
       if (err) return;
       form.resetFields();
-
-      if(updateData==={})
+      if(JSON.stringify(updateData)=='{}')  //新增
       {
-        console.log("222");
         handleAdd(fieldsValue);
       }
-      else
+      else  //修改
       {
         handleUpdate(fieldsValue,updateData._id);
       }
-
     });
   };
   return (
@@ -80,7 +77,7 @@ export default class Category extends PureComponent {
       const newObj = { ...obj };
       newObj[key] = getValue(filtersArg[key]);
       return newObj;
-    }, {});
+    }, {});  //表格上的筛选查询
 
     const params = {
       currentPage: pagination.current,
@@ -91,6 +88,7 @@ export default class Category extends PureComponent {
     if (sorter.field) {
       params.sorter = `${sorter.field}_${sorter.order}`;
     }
+   
 
     dispatch({
       type: 'category/fetch',
@@ -269,6 +267,7 @@ export default class Category extends PureComponent {
       {
         title: '分类名称',
         dataIndex: 'name',
+        sorter: true
       },
       {
         title: '更新时间',

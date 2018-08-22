@@ -13,7 +13,6 @@ export default {
   effects: {
     *fetch({ payload }, { call, put }) {
       const response = yield call(queryList, payload);
-      console.log(response);
       if(response.success)
       {
         yield put({

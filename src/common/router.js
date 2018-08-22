@@ -74,20 +74,20 @@ export const getRouterData = app => {
     '/': {
       component: dynamicWrapper(app, ['user', 'login'], () => import('../layouts/BasicLayout')),
     },
-    '/dashboard/analysis': {
-      component: dynamicWrapper(app, ['chart'], () => import('../routes/Dashboard/Analysis')),
-    },
-    '/dashboard/monitor': {
-      component: dynamicWrapper(app, ['monitor'], () => import('../routes/Dashboard/Monitor')),
-    },
-    '/dashboard/workplace': {
-      component: dynamicWrapper(app, ['project', 'activities', 'chart'], () =>
-        import('../routes/Dashboard/Workplace')
-      ),
-      // hideInBreadcrumb: true,
-      // name: '工作台',
-      // authority: 'admin',
-    },
+    // '/dashboard/analysis': {
+    //   component: dynamicWrapper(app, ['chart'], () => import('../routes/Dashboard/Analysis')),
+    // },
+    // '/dashboard/monitor': {
+    //   component: dynamicWrapper(app, ['monitor'], () => import('../routes/Dashboard/Monitor')),
+    // },
+    // '/dashboard/workplace': {
+    //   component: dynamicWrapper(app, ['project', 'activities', 'chart'], () =>
+    //     import('../routes/Dashboard/Workplace')
+    //   ),
+    //   // hideInBreadcrumb: true,
+    //   // name: '工作台',
+    //   // authority: 'admin',
+    // },
     // '/form/basic-form': {
     //   component: dynamicWrapper(app, ['form'], () => import('../routes/Forms/BasicForm')),
     // },
@@ -109,6 +109,9 @@ export const getRouterData = app => {
     // '/form/advanced-form': {
     //   component: dynamicWrapper(app, ['form'], () => import('../routes/Forms/AdvancedForm')),
     // },
+    '/bussiness/category': {
+      component: dynamicWrapper(app, ['category'], () => import('../routes/Bussiness/Category')),
+    },
     '/list/table-list': {
       component: dynamicWrapper(app, ['rule'], () => import('../routes/List/TableList')),
     },
@@ -170,9 +173,7 @@ export const getRouterData = app => {
     '/user/register-result': {
       component: dynamicWrapper(app, [], () => import('../routes/User/RegisterResult')),
     },
-    '/bussiness/category': {
-      component: dynamicWrapper(app, ['category'], () => import('../routes/Bussiness/Category')),
-    },
+ 
     // '/user/:id': {
     //   component: dynamicWrapper(app, [], () => import('../routes/User/SomeComponent')),
     // },

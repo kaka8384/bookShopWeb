@@ -2,39 +2,35 @@ import { stringify } from 'qs';
 import request from '../utils/request';
 
 export async function queryList(params) {
-  let url = `/api/CatgeoryByPage`;
-  if (params) {
-    url = `/api/CatgeoryByPage?${stringify(params)}`;
+    let url = `/api/ProductByPage?queryType=2`;
+    if (params) {
+      url = `/api/ProductByPage?queryType=2&${stringify(params)}`;
+    }
+    return request(url);
   }
-  return request(url);
-}
 
-export async function queryAll(params) {
-    return request(`/api/AllCatgeory`);
-}
-
-export async function addService(params) {
-    return request('/api/AddCatgeory', {
+  export async function addService(params) {
+    return request('/api/AddProduct', {
       method: 'POST',
       body: params,
     });
   }
 
   export async function deleteService(params) {
-    return request('/api/DeleteCatgeory/'+params.cid, {
+    return request('/api/DeleteProduct/'+params.cid, {
       method: 'DELETE'
     });
   }
 
   export async function batchdeleteService(params) {
-    return request('/api/BatchDeleteCatgeory', {
+    return request('/api/BatchDeleteProduct', {
       method: 'DELETE',
       body:{categoryIds:params.categoryIds.split(",")} 
     });
   }
 
   export async function updateService(params) {
-    return request('/api/UpdateCatgeory/'+params.cid, {
+    return request('/api/UpdateProduct/'+params.cid, {
       method: 'PUT',
       body: params
     });

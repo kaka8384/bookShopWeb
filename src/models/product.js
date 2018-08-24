@@ -1,14 +1,14 @@
-import { queryList,queryAll,addService,deleteService,batchdeleteService,updateService } from '../services/category';
+import { queryList,addService,deleteService,batchdeleteService,updateService } from '../services/product';
+
 
 export default {
-  namespace: 'category',
+  namespace: 'product',
 
   state: {
     data: {
       list: [],
       pagination: {},
     },
-    categories:[]
   },
 
   effects: {
@@ -22,17 +22,6 @@ export default {
             tag:'query'
           });
       }
-    },
-    *fetchall({ payload }, { call, put }) {
-    const response = yield call(queryAll, payload);
-    if(response.success)
-    {
-        yield put({
-            type: 'save',
-            payload: response,
-            tag:'queryall'
-        });
-    }
     },
     *add({ payload, callback }, { call, put }) {
     const response = yield call(addService, payload);
@@ -95,16 +84,9 @@ export default {
                     data: action.payload,
                 };
             }
-            case 'queryall':
-            {
-                return {
-                    ...state,
-                    categories: action.payload.categories
-                };
-            }
             case 'add':
             {
-                state.data.list.unshift(action.payload.category);  //把新增数据添加到原列表中
+                state.data.list.unshift(action.payload.product);  //把新增数据添加到原列表中
                 let returnObject={
                     ...state,
                     data: {
@@ -119,11 +101,11 @@ export default {
             }
             case 'update':
             {
-                let category=action.payload.category;
+                let product=action.payload.product;
                 let index=state.data.list.findIndex(function(value, index, arr) {
-                    return value._id===category._id;
+                    return value._id===product._id;
                   });
-                state.data.list.splice(index,1,category); //替换数据
+                state.data.list.splice(index,1,product); //替换数据
                 let returnObject={
                     ...state,
                     data: {
@@ -141,7 +123,7 @@ export default {
                 let returnObject={
                     ...state,
                     data: {
-                        list:state.data.list.filter(item => item._id!=action.payload.categoryId),
+                        list:state.data.list.filter(item => item._id!=action.payload.productId),
                         pagination: {
                             total:state.data.pagination.total-1
                         },
@@ -152,13 +134,13 @@ export default {
             }
             case 'batchremove':
             {
-                let categoryIds=action.payload.categoryIds; //批量删除的分类ID
+                let productIds=action.payload.productIds; //批量删除的分类ID
                 let returnObject={
                     ...state,
                     data: {
-                        list:state.data.list.filter(item => categoryIds.indexOf(item._id)===-1),
+                        list:state.data.list.filter(item => productIds.indexOf(item._id)===-1),
                         pagination: {
-                            total:state.data.pagination.total-categoryIds.length
+                            total:state.data.pagination.total-productIds.length
                         },
                         success:true
                       }

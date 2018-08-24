@@ -112,6 +112,15 @@ export const getRouterData = app => {
     '/bussiness/category': {
       component: dynamicWrapper(app, ['category'], () => import('../routes/Bussiness/Category')),
     },
+    '/bussiness/product': {
+      component: dynamicWrapper(app, ['product','category'], () => import('../routes/Bussiness/Product')),
+    },
+    // '/bussiness/product_comment': {
+    //   component: dynamicWrapper(app, ['product_comment'], () => import('../routes/Bussiness/ProductComment')),
+    // },
+    // '/bussiness/product_issue': {
+    //   component: dynamicWrapper(app, ['product_issue'], () => import('../routes/Bussiness/ProductIssue')),
+    // },
     '/list/table-list': {
       component: dynamicWrapper(app, ['rule'], () => import('../routes/List/TableList')),
     },
@@ -156,11 +165,11 @@ export const getRouterData = app => {
     '/exception/500': {
       component: dynamicWrapper(app, [], () => import('../routes/Exception/500')),
     },
-    '/exception/trigger': {
-      component: dynamicWrapper(app, ['error'], () =>
-        import('../routes/Exception/triggerException')
-      ),
-    },
+    // '/exception/trigger': {
+    //   component: dynamicWrapper(app, ['error'], () =>
+    //     import('../routes/Exception/triggerException')
+    //   ),
+    // },
     '/user': {
       component: dynamicWrapper(app, [], () => import('../layouts/UserLayout')),
     },
@@ -173,7 +182,6 @@ export const getRouterData = app => {
     '/user/register-result': {
       component: dynamicWrapper(app, [], () => import('../routes/User/RegisterResult')),
     },
- 
     // '/user/:id': {
     //   component: dynamicWrapper(app, [], () => import('../routes/User/SomeComponent')),
     // },

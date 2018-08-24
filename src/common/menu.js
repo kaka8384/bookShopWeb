@@ -28,12 +28,16 @@ const menuData = [
     path: 'bussiness',
     children: [
       {
-        name: '商品分类管理',
-        path: 'category'
+        name: '订单管理',
+        path: 'order'
       },
       {
         name: '商品管理',
         path: 'product'
+      },
+      {
+        name: '商品分类管理',
+        path: 'category'
       },
       {
         name: '商品评论管理',
@@ -44,14 +48,25 @@ const menuData = [
         path: 'product_issue'
       },
       {
-        name: '订单管理',
-        path: 'order'
-      },
-      {
-        name: '网站用户管理',
+        name: '网站客户管理',
         path: 'customer'
       }
     ],
+  },
+  {
+    name: '系统管理',
+    icon: 'form',
+    path: 'system',
+    children: [      
+      {
+        name: '用户管理',
+        path: 'user'
+      },
+      {
+        name: '日志管理',
+        path: 'log'
+      }
+    ]
   },
   // {
   //   name: '表单页',
@@ -141,30 +156,6 @@ const menuData = [
       },
     ],
   },
-  // {
-  //   name: '异常页',
-  //   icon: 'warning',
-  //   path: 'exception',
-  //   children: [
-  //     {
-  //       name: '403',
-  //       path: '403',
-  //     },
-  //     {
-  //       name: '404',
-  //       path: '404',
-  //     },
-  //     {
-  //       name: '500',
-  //       path: '500',
-  //     },
-  //     {
-  //       name: '触发异常',
-  //       path: 'trigger',
-  //       hideInMenu: true,
-  //     },
-  //   ],
-  // },
   {
     name: '账户',
     icon: 'user',

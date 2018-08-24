@@ -108,7 +108,6 @@ export default class Category extends PureComponent {
     });
   };
 
-
   handleSelectRows = rows => {
     this.setState({
       selectedRows: rows,
@@ -125,7 +124,6 @@ export default class Category extends PureComponent {
 
       const values = {
         ...fieldsValue,
-        // updated: fieldsValue.updated && fieldsValue.updated.valueOf(),
       };
 
       this.setState({
@@ -251,8 +249,6 @@ export default class Category extends PureComponent {
   }
 
   renderForm() {
-    // const { expandForm } = this.state;
-    // return expandForm ? this.renderAdvancedForm() : this.renderSimpleForm();
     return this.renderSimpleForm();
   }
 

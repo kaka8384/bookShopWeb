@@ -10,6 +10,11 @@ module.exports = {
     jasmine: true,
   },
   rules: {
+    ' no-unused-expressions': 0,
+    'no-unneeded-ternary': 2,
+    'no-script-url': 'off',
+    'no-underscore-dangle': 0,
+    'prefer-template': 'off',
     'generator-star-spacing': [0],
     'consistent-return': [0],
     'react/forbid-prop-types': [0],

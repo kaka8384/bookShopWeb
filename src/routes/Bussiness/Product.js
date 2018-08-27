@@ -41,13 +41,12 @@ const CreateForm = Form.create()(props => {
     handleModalVisible,
     modalTitle,
     updateData,
-    renderOptions,
+    category,
     handleChangeImgs,
     defaultFileList,
   } = props;
-
+  console.log(category);
   // const uploadedFiles=[];
-
   const uploadProps = {
     action: '/api/UploadImg',
     listType: 'picture',
@@ -55,8 +54,7 @@ const CreateForm = Form.create()(props => {
     fileList: defaultFileList,
     accept: 'image/jpg,image/jpeg,image/png,image/bmp',
   };
-  // console.log(fileList);
-  //  console.log(uploadedFiles);
+
   const okHandle = () => {
     form.validateFields((err, fieldsValue) => {
       if (err) return;
@@ -70,6 +68,7 @@ const CreateForm = Form.create()(props => {
       }
     });
   };
+
 
   return (
     <Modal
@@ -98,7 +97,11 @@ const CreateForm = Form.create()(props => {
               option.props.children[1].toLowerCase().indexOf(input.toLowerCase()) >= 0
             }
           >
-            {renderOptions()}
+            {category.categories.map(element => 
+                <Option key={element._id} value={element._id}>
+                {element.name}
+                </Option>
+            )}
           </Select>
         )}
       </FormItem>
@@ -204,17 +207,6 @@ export default class Product extends PureComponent {
     });
   }
 
-  // 加载商品分类
-  renderOptions = () => {
-    const { category } = this.props;
-    category.categories.foreach(element => {
-      return (
-        <Option key={element._id} value={element._id}>
-          {element.name}
-        </Option>
-      );
-    });
-  };
 
   // 设置已上传的图片
   handleChangeImgs = files => {
@@ -310,6 +302,7 @@ export default class Product extends PureComponent {
 
   handleModalVisible = (flag, record) => {
     const fileobj = [];
+    const updateData={};
     if (record) {
       record.images.map(item => {
         return fileobj.push({
@@ -320,11 +313,12 @@ export default class Product extends PureComponent {
           thumbUrl: item,
         });
       });
+      updateData=record;
     }
     this.setState({
       modalVisible: !!flag,
       modalTitle: record ? '修改商品' : '新建商品',
-      updateData: record,
+      updateData: updateData,
       fileList: [],
       defaultFileList: fileobj,
     });
@@ -534,6 +528,7 @@ export default class Product extends PureComponent {
     const {
       product: { data },
       loading,
+      category
     } = this.props;
     const {
       selectedRows,
@@ -625,7 +620,6 @@ export default class Product extends PureComponent {
       handleAdd: this.handleAdd,
       handleUpdate: this.handleUpdate,
       handleModalVisible: this.handleModalVisible,
-      renderOptions: this.renderOptions,
       handleChangeImgs: this.handleChangeImgs,
     };
 
@@ -653,6 +647,7 @@ export default class Product extends PureComponent {
           updateData={updateData}
           fileList={fileList}
           defaultFileList={defaultFileList}
+          category={category}
         />
       </PageHeaderLayout>
     );

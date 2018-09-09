@@ -15,15 +15,7 @@ const getValue = obj =>
 
 //  创建新增分类的Form
 const CreateForm = Form.create()(props => {
-  const {
-    modalVisible,
-    form,
-    handleAdd,
-    handleUpdate,
-    handleModalVisible,
-    modalTitle,
-    updateData,
-  } = props;
+  const { modalVisible, form, handleAdd, handleUpdate, handleModalVisible, updateData } = props;
   const okHandle = () => {
     form.validateFields((err, fieldsValue) => {
       if (err) return;
@@ -39,7 +31,7 @@ const CreateForm = Form.create()(props => {
   };
   return (
     <Modal
-      title={modalTitle}
+      title="回答提问"
       visible={modalVisible}
       onOk={okHandle}
       onCancel={() => handleModalVisible()}
@@ -54,15 +46,15 @@ const CreateForm = Form.create()(props => {
   );
 });
 
-@connect(({ category, loading }) => ({
-  category,
-  loading: loading.models.category,
+@connect(({ product_issue, loading }) => ({
+  product_issue,
+  loading: loading.models.product_issue,
 }))
 @Form.create()
-export default class Category extends PureComponent {
+export default class Product_Issue extends PureComponent {
   state = {
     modalVisible: false,
-    modalTitle: '',
+    // modalTitle:"",
     updateData: {},
     selectedRows: [],
     formValues: {},
@@ -71,7 +63,7 @@ export default class Category extends PureComponent {
   componentDidMount() {
     const { dispatch } = this.props;
     dispatch({
-      type: 'category/fetch',
+      type: 'product_issue/fetch',
     });
   }
 
@@ -97,7 +89,7 @@ export default class Category extends PureComponent {
     }
 
     dispatch({
-      type: 'category/fetch',
+      type: 'product_issue/fetch',
       payload: params,
     });
   };
@@ -109,7 +101,7 @@ export default class Category extends PureComponent {
       formValues: {},
     });
     dispatch({
-      type: 'category/fetch',
+      type: 'product_issue/fetch',
       payload: {},
     });
   };
@@ -137,7 +129,7 @@ export default class Category extends PureComponent {
       });
 
       dispatch({
-        type: 'category/fetch',
+        type: 'product_issue/fetch',
         payload: values,
       });
     });
@@ -146,26 +138,26 @@ export default class Category extends PureComponent {
   handleModalVisible = (flag, record) => {
     this.setState({
       modalVisible: !!flag,
-      modalTitle: record ? '修改分类' : '新建分类',
+      //   modalTitle: record?"修改分类":"新建分类",
       updateData: record ? record : {},
     });
   };
 
   //  新增分类事件
-  handleAdd = fields => {
-    const { dispatch } = this.props;
-    dispatch({
-      type: 'category/add',
-      payload: {
-        name: fields.name,
-      },
-    });
+  //   handleAdd = fields => {
+  //     const { dispatch } = this.props;
+  //     dispatch({
+  //       type: 'category/add',
+  //       payload: {
+  //         name: fields.name,
+  //       },
+  //     });
 
-    message.success('添加成功');
-    this.setState({
-      modalVisible: false,
-    });
-  };
+  //     message.success('添加成功');
+  //     this.setState({
+  //       modalVisible: false,
+  //     });
+  //   };
 
   //  修改分类事件
   handleUpdate = (fields, cid) => {
@@ -187,7 +179,7 @@ export default class Category extends PureComponent {
   handleDelete = categoryId => {
     const { dispatch } = this.props;
     dispatch({
-      type: 'category/remove',
+      type: 'product_issue/remove',
       payload: {
         cid: categoryId,
       },
@@ -200,9 +192,9 @@ export default class Category extends PureComponent {
     const { selectedRows } = this.state;
     if (!selectedRows) return;
     dispatch({
-      type: 'category/batchremove',
+      type: 'product_issue/batchremove',
       payload: {
-        categoryIds: selectedRows.map(row => row._id).join(','),
+        issueIds: selectedRows.map(row => row._id).join(','),
       },
       callback: () => {
         this.setState({
@@ -221,7 +213,7 @@ export default class Category extends PureComponent {
       <Form onSubmit={this.handleSearch} layout="inline">
         <Row gutter={{ md: 8, lg: 24, xl: 48 }}>
           <Col md={8} sm={24}>
-            <FormItem label="分类名称">
+            <FormItem label="商品名称">
               {getFieldDecorator('name')(<Input placeholder="请输入" />)}
             </FormItem>
           </Col>
@@ -233,14 +225,14 @@ export default class Category extends PureComponent {
               <Button style={{ marginLeft: 8 }} onClick={this.handleFormReset}>
                 重置
               </Button>
-              <Button
+              {/* <Button
                 style={{ marginLeft: 8 }}
                 icon="plus"
                 type="primary"
                 onClick={() => this.handleModalVisible(true)}
               >
                 新建
-              </Button>
+              </Button> */}
               {selectedRows.length > 0 && (
                 <span>
                   <Button onClick={() => this.handleBatchDelete()} style={{ marginLeft: 8 }}>
@@ -261,17 +253,32 @@ export default class Category extends PureComponent {
 
   render() {
     const {
-      category: { data },
+      product_issue: { data },
       loading,
     } = this.props;
-    const { selectedRows, modalVisible, modalTitle, updateData } = this.state;
+    const { selectedRows, modalVisible, updateData } = this.state;
 
     const columns = [
       {
-        title: '分类名称',
-        dataIndex: 'name',
+        title: '商品名称',
+        dataIndex: 'productName',
         sorter: true,
       },
+      {
+        title: '问题',
+        dataIndex: 'issue',
+      },
+      {
+        title: '回答',
+        dataIndex: 'aswer',
+      },
+      {
+        title: '提问时间',
+        dataIndex: 'issueDate',
+        sorter: true,
+        render: val => <span>{moment(val).format('YYYY-MM-DD HH:mm:ss')}</span>,
+      },
+
       {
         title: '更新时间',
         dataIndex: 'updated',
@@ -283,7 +290,7 @@ export default class Category extends PureComponent {
         render: (text, record) => (
           <Fragment>
             <a href="javascript:void(0);" onClick={() => this.handleModalVisible(true, record)}>
-              修改
+              回答
             </a>
             <Divider type="vertical" />
             <a href="javascript:void(0);" onClick={() => this.handleDelete(record._id)}>
@@ -294,15 +301,8 @@ export default class Category extends PureComponent {
       },
     ];
 
-    // const menu = (
-    //   <Menu onClick={this.handleMenuClick} selectedKeys={[]}>
-    //     <Menu.Item key="remove">删除</Menu.Item>
-    //     <Menu.Item key="approval">批量审批</Menu.Item>
-    //   </Menu>
-    // );
-
     const parentMethods = {
-      handleAdd: this.handleAdd,
+      //   handleAdd: this.handleAdd,
       handleUpdate: this.handleUpdate,
       handleModalVisible: this.handleModalVisible,
     };
@@ -324,12 +324,7 @@ export default class Category extends PureComponent {
             />
           </div>
         </Card>
-        <CreateForm
-          {...parentMethods}
-          modalVisible={modalVisible}
-          modalTitle={modalTitle}
-          updateData={updateData}
-        />
+        <CreateForm {...parentMethods} modalVisible={modalVisible} updateData={updateData} />
       </PageHeaderLayout>
     );
   }

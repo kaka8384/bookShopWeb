@@ -33,7 +33,7 @@ export default {
       }
     },
     *fetchOne({ payload }, { call, put }) {
-      const response = yield call(querySingle, payload);
+      const response = yield call(querySingle, payload.id);
       if (response.success) {
         yield put({
           type: 'save',
@@ -42,8 +42,9 @@ export default {
         });
         yield put(
           routerRedux.push({
-            pathname: '/bussiness/productEdit',
-            query: { pid: payload },
+            pathname:
+              payload.type === 'edit' ? '/bussiness/productEdit' : '/bussiness/productDetail',
+            query: { pid: payload.id },
           })
         );
       }

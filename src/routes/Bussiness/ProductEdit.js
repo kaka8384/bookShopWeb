@@ -15,7 +15,6 @@ import {
   message,
 } from 'antd';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
-// import styles from './form.less';
 
 const FormItem = Form.Item;
 const { Option } = Select;
@@ -27,11 +26,9 @@ const { TextArea } = Input;
   submitting: loading.effects['product/add'],
 }))
 @Form.create()
-export default class BasicForms extends PureComponent {
+export default class ProductEdit extends PureComponent {
   state = {
     editType: 1, // 编辑类型 1.新增 2.修改
-    // formValues: {},
-    // fileList: [], // 已上传的图片列表
   };
 
   componentWillMount() {

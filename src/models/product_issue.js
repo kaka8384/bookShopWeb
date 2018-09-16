@@ -13,7 +13,6 @@ export default {
       list: [],
       pagination: {},
     },
-    // categories:[]
   },
 
   effects: {
@@ -27,17 +26,6 @@ export default {
         });
       }
     },
-    // *fetchall({ payload }, { call, put }) {
-    // const response = yield call(queryAll, payload);
-    // if(response.success)
-    // {
-    //     yield put({
-    //         type: 'save',
-    //         payload: response,
-    //         tag:'queryall'
-    //     });
-    // }
-    // },
     // *add({ payload, callback }, { call, put }) {
     // const response = yield call(addService, payload);
     // if(response.success)

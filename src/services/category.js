@@ -13,6 +13,14 @@ export async function queryAll() {
   return request(`/api/AllCatgeory`);
 }
 
+export async function querySingle(params) {
+  let url = `/api/CategoryQuery?queryType=2`;
+  if (params) {
+    url = `/api/CategoryQuery?queryType=2&cid=${params}`;
+  }
+  return request(url);
+}
+
 export async function addService(params) {
   return request('/api/AddCatgeory', {
     method: 'POST',

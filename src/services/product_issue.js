@@ -4,18 +4,10 @@ import request from '../utils/request';
 export async function queryList(params) {
   let url = `/api/Product_IssueByPage`;
   if (params) {
-    url = `/api/ProductByPage?${stringify(params)}`;
+    url = `/api/Product_IssueByPage?${stringify(params)}`;
   }
   return request(url);
 }
-
-// export async function querySingle(params) {
-//   let url = `/api/ProductQuery?queryType=2`;
-//   if (params) {
-//     url = `/api/ProductQuery?queryType=2&pid=${params}`;
-//   }
-//   return request(url);
-// }
 
 export async function addService(params) {
   return request('/api/AddProductIssue', {
@@ -27,6 +19,7 @@ export async function addService(params) {
 export async function deleteService(params) {
   return request('/api/DeleteProductIssue/' + params.issueId, {
     method: 'DELETE',
+    body: params,
   });
 }
 
@@ -40,13 +33,13 @@ export async function batchdeleteService(params) {
 export async function updateService(params) {
   return request('/api/UpdateProductIssue/' + params.issueId, {
     method: 'PUT',
-    body: params.issue,
+    body: params,
   });
 }
 
 export async function answerService(params) {
   return request('/api/AnswerProductIssue/' + params.issueId, {
     method: 'PUT',
-    body: params.issue,
+    body: params,
   });
 }

@@ -88,13 +88,6 @@ export const getRouterData = app => {
     //   // name: '工作台',
     //   // authority: 'admin',
     // },
-    // '/form/basic-form': {
-    //   component: dynamicWrapper(app, ['form'], () => import('../routes/Forms/BasicForm')),
-    // },
-    // '/form/step-form': {
-    //   component: dynamicWrapper(app, ['form'], () => import('../routes/Forms/StepForm')),
-    // },
-
     '/bussiness/category': {
       component: dynamicWrapper(app, ['category'], () => import('../routes/Bussiness/Category')),
     },
@@ -108,23 +101,21 @@ export const getRouterData = app => {
         import('../routes/Bussiness/ProductEdit')
       ),
     },
-    // '/bussiness/product_comment': {
-    //   component: dynamicWrapper(app, ['product_comment'], () => import('../routes/Bussiness/ProductComment')),
-    // },
+    '/bussiness/productDetail': {
+      component: dynamicWrapper(app, ['product', 'category'], () =>
+        import('../routes/Bussiness/ProductDetail')
+      ),
+    },
+    '/bussiness/product_comment': {
+      component: dynamicWrapper(app, ['product_comment'], () =>
+        import('../routes/Bussiness/ProductComment')
+      ),
+    },
     '/bussiness/product_issue': {
       component: dynamicWrapper(app, ['product_issue'], () =>
         import('../routes/Bussiness/Product_Issue')
       ),
     },
-    // '/list/table-list': {
-    //   component: dynamicWrapper(app, ['rule'], () => import('../routes/List/TableList')),
-    // },
-    // '/list/basic-list': {
-    //   component: dynamicWrapper(app, ['list'], () => import('../routes/List/BasicList')),
-    // },
-    // '/list/card-list': {
-    //   component: dynamicWrapper(app, ['list'], () => import('../routes/List/CardList')),
-    // },
     '/list/search': {
       component: dynamicWrapper(app, ['list'], () => import('../routes/List/List')),
     },
@@ -136,14 +127,6 @@ export const getRouterData = app => {
     // },
     // '/list/search/articles': {
     //   component: dynamicWrapper(app, ['list'], () => import('../routes/List/Articles')),
-    // },
-    // '/profile/basic': {
-    //   component: dynamicWrapper(app, ['profile'], () => import('../routes/Profile/BasicProfile')),
-    // },
-    // '/profile/advanced': {
-    //   component: dynamicWrapper(app, ['profile'], () =>
-    //     import('../routes/Profile/AdvancedProfile')
-    //   ),
     // },
     '/result/success': {
       component: dynamicWrapper(app, [], () => import('../routes/Result/Success')),

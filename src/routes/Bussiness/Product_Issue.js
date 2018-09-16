@@ -1,32 +1,40 @@
 import React, { PureComponent, Fragment } from 'react';
 import { connect } from 'dva';
 import moment from 'moment';
-import { Row, Col, Card, Form, Input, Button, Modal, message, Divider } from 'antd';
+import {
+  Row,
+  Col,
+  Card,
+  Form,
+  Input,
+  Button,
+  Modal,
+  message,
+  Divider,
+  Icon,
+  DatePicker,
+} from 'antd';
 import StandardTable from 'components/StandardTable';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 
 import styles from './table.less';
 
 const FormItem = Form.Item;
+const { TextArea } = Input;
+const { RangePicker } = DatePicker;
 const getValue = obj =>
   Object.keys(obj)
     .map(key => obj[key])
     .join(',');
 
-//  创建新增分类的Form
+//  创建回答问题的Form
 const CreateForm = Form.create()(props => {
-  const { modalVisible, form, handleAdd, handleUpdate, handleModalVisible, updateData } = props;
+  const { modalVisible, form, handleUpdate, handleModalVisible, updateData } = props;
   const okHandle = () => {
     form.validateFields((err, fieldsValue) => {
       if (err) return;
       form.resetFields();
-      if (JSON.stringify(updateData) === '{}') {
-        //  新增
-        handleAdd(fieldsValue);
-      } //  修改
-      else {
-        handleUpdate(fieldsValue, updateData._id);
-      }
+      handleUpdate(fieldsValue, updateData._id);
     });
   };
   return (
@@ -36,11 +44,11 @@ const CreateForm = Form.create()(props => {
       onOk={okHandle}
       onCancel={() => handleModalVisible()}
     >
-      <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 15 }} label="分类名称">
-        {form.getFieldDecorator('name', {
-          rules: [{ required: true, message: '请输入分类名称...' }],
-          initialValue: updateData.name,
-        })(<Input placeholder="请输入" />)}
+      <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 15 }} label="回答内容">
+        {form.getFieldDecorator('answer', {
+          rules: [{ required: true, message: '请输入回答内容...' }],
+          initialValue: updateData.answer,
+        })(<TextArea rows={4} placeholder="请输入" />)}
       </FormItem>
     </Modal>
   );
@@ -54,7 +62,7 @@ const CreateForm = Form.create()(props => {
 export default class Product_Issue extends PureComponent {
   state = {
     modalVisible: false,
-    // modalTitle:"",
+    expandForm: false,
     updateData: {},
     selectedRows: [],
     formValues: {},
@@ -123,7 +131,16 @@ export default class Product_Issue extends PureComponent {
       const values = {
         ...fieldsValue,
       };
-
+      if (values.issueDate) {
+        // 出版时间查询
+        Object.assign(values, {
+          issueDate_s: values.issueDate[0].format('YYYY-MM-DD'),
+        });
+        Object.assign(values, {
+          issueDate_e: values.issueDate[1].format('YYYY-MM-DD'),
+        });
+        Object.assign(values, { issueDate: undefined });
+      }
       this.setState({
         formValues: values,
       });
@@ -138,50 +155,42 @@ export default class Product_Issue extends PureComponent {
   handleModalVisible = (flag, record) => {
     this.setState({
       modalVisible: !!flag,
-      //   modalTitle: record?"修改分类":"新建分类",
       updateData: record ? record : {},
     });
   };
 
-  //  新增分类事件
-  //   handleAdd = fields => {
-  //     const { dispatch } = this.props;
-  //     dispatch({
-  //       type: 'category/add',
-  //       payload: {
-  //         name: fields.name,
-  //       },
-  //     });
+  // 展开
+  toggleForm = () => {
+    const { expandForm } = this.state;
+    this.setState({
+      expandForm: !expandForm,
+    });
+  };
 
-  //     message.success('添加成功');
-  //     this.setState({
-  //       modalVisible: false,
-  //     });
-  //   };
-
-  //  修改分类事件
-  handleUpdate = (fields, cid) => {
+  //  回答提问事件
+  handleUpdate = (fields, issueId) => {
     const { dispatch } = this.props;
     dispatch({
-      type: 'category/update',
+      type: 'product_issue/answer',
       payload: {
-        name: fields.name,
-        cid: cid,
+        answer: fields.answer,
+        issueId: issueId,
       },
     });
 
-    message.success('修改成功');
+    message.success('提问回答成功');
     this.setState({
       modalVisible: false,
     });
   };
 
-  handleDelete = categoryId => {
+  handleDelete = issueId => {
     const { dispatch } = this.props;
     dispatch({
       type: 'product_issue/remove',
       payload: {
-        cid: categoryId,
+        issueId: issueId,
+        isAdmin: true,
       },
     });
     message.success('删除成功');
@@ -214,7 +223,12 @@ export default class Product_Issue extends PureComponent {
         <Row gutter={{ md: 8, lg: 24, xl: 48 }}>
           <Col md={8} sm={24}>
             <FormItem label="商品名称">
-              {getFieldDecorator('name')(<Input placeholder="请输入" />)}
+              {getFieldDecorator('productName')(<Input placeholder="请输入" />)}
+            </FormItem>
+          </Col>
+          <Col md={8} sm={24}>
+            <FormItem label="问题">
+              {getFieldDecorator('issue')(<Input placeholder="请输入" />)}
             </FormItem>
           </Col>
           <Col md={8} sm={24}>
@@ -225,14 +239,6 @@ export default class Product_Issue extends PureComponent {
               <Button style={{ marginLeft: 8 }} onClick={this.handleFormReset}>
                 重置
               </Button>
-              {/* <Button
-                style={{ marginLeft: 8 }}
-                icon="plus"
-                type="primary"
-                onClick={() => this.handleModalVisible(true)}
-              >
-                新建
-              </Button> */}
               {selectedRows.length > 0 && (
                 <span>
                   <Button onClick={() => this.handleBatchDelete()} style={{ marginLeft: 8 }}>
@@ -240,6 +246,9 @@ export default class Product_Issue extends PureComponent {
                   </Button>
                 </span>
               )}
+              <a style={{ marginLeft: 8 }} onClick={this.toggleForm}>
+                展开 <Icon type="down" />
+              </a>
             </span>
           </Col>
         </Row>
@@ -247,8 +256,63 @@ export default class Product_Issue extends PureComponent {
     );
   }
 
+  renderAdvancedForm() {
+    const { form } = this.props;
+    const { getFieldDecorator } = form;
+    const { selectedRows } = this.state;
+    const rangeConfig = {
+      rules: [{ type: 'array' }],
+    };
+    return (
+      <Form onSubmit={this.handleSearch} layout="inline">
+        <Row gutter={{ md: 8, lg: 24, xl: 48 }}>
+          <Col md={8} sm={24}>
+            <FormItem label="商品名称">
+              {getFieldDecorator('productName')(<Input placeholder="请输入" />)}
+            </FormItem>
+          </Col>
+          <Col md={8} sm={24}>
+            <FormItem label="问题">
+              {getFieldDecorator('issue')(<Input placeholder="请输入" />)}
+            </FormItem>
+          </Col>
+          <Col md={8} sm={24}>
+            <span className={styles.submitButtons}>
+              <Button type="primary" htmlType="submit">
+                查询
+              </Button>
+              <Button style={{ marginLeft: 8 }} onClick={this.handleFormReset}>
+                重置
+              </Button>
+              {selectedRows.length > 0 && (
+                <span>
+                  <Button onClick={() => this.handleBatchDelete()} style={{ marginLeft: 8 }}>
+                    批量删除
+                  </Button>
+                </span>
+              )}
+              <a style={{ marginLeft: 8 }} onClick={this.toggleForm}>
+                收起 <Icon type="up" />
+              </a>
+            </span>
+          </Col>
+        </Row>
+        <Row gutter={{ md: 8, lg: 24, xl: 48 }}>
+          <Col md={8} sm={24}>
+            <FormItem label="提问日期">
+              {getFieldDecorator('issueDate', rangeConfig)(
+                <RangePicker style={{ width: '100%' }} />
+              )}
+            </FormItem>
+          </Col>
+        </Row>
+      </Form>
+    );
+  }
+
   renderForm() {
-    return this.renderSimpleForm();
+    const { expandForm } = this.state;
+    return expandForm ? this.renderAdvancedForm() : this.renderSimpleForm();
   }
 
   render() {
@@ -270,7 +334,7 @@ export default class Product_Issue extends PureComponent {
       },
       {
         title: '回答',
-        dataIndex: 'aswer',
+        dataIndex: 'answer',
       },
       {
         title: '提问时间',
@@ -302,7 +366,6 @@ export default class Product_Issue extends PureComponent {
     ];
 
     const parentMethods = {
-      //   handleAdd: this.handleAdd,
       handleUpdate: this.handleUpdate,
       handleModalVisible: this.handleModalVisible,
     };

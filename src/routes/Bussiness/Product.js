@@ -34,7 +34,6 @@ const getValue = obj =>
 @Form.create()
 export default class Product extends PureComponent {
   state = {
-    // updateData: {},
     selectedRows: [],
     formValues: {},
     expandForm: false,
@@ -123,6 +122,16 @@ export default class Product extends PureComponent {
         });
         Object.assign(values, { publicationTime: undefined });
       }
+      if (values.publicationTime) {
+        // 出版时间查询
+        Object.assign(values, {
+          publicationTime_S: values.publicationTime[0].format('YYYY-MM-DD'),
+        });
+        Object.assign(values, {
+          publicationTime_E: values.publicationTime[1].format('YYYY-MM-DD'),
+        });
+        Object.assign(values, { publicationTime: undefined });
+      }
       this.setState({
         formValues: values,
       });
@@ -139,13 +148,26 @@ export default class Product extends PureComponent {
     if (id) {
       dispatch({
         type: 'product/fetchOne',
-        payload: id,
+        payload: { id, type: 'edit' },
       });
     } else {
       dispatch({
         type: 'product/clearItem',
       });
     }
+  };
+
+  //  商品详情
+  handleDetail = (id, cid) => {
+    const { dispatch } = this.props;
+    dispatch({
+      type: 'category/fetchOne',
+      payload: cid,
+    });
+    dispatch({
+      type: 'product/fetchOne',
+      payload: { id, type: 'detail' },
+    });
   };
 
   handleDelete = id => {
@@ -295,19 +317,6 @@ export default class Product extends PureComponent {
             </span>
           </Col>
         </Row>
-        {/* <div style={{ overflow: 'hidden' }}>
-          <div style={{ float: 'right', marginBottom: 24 }}>
-            <Button type="primary" htmlType="submit">
-              查询
-            </Button>
-            <Button style={{ marginLeft: 8 }} onClick={this.handleFormReset}>
-              重置
-            </Button>
-            <a style={{ marginLeft: 8 }} onClick={this.toggleForm}>
-              收起 <Icon type="up" />
-            </a>
-          </div>
-        </div> */}
       </Form>
     );
   }
@@ -316,6 +325,132 @@ export default class Product extends PureComponent {
     const { expandForm } = this.state;
     return expandForm ? this.renderAdvancedForm() : this.renderSimpleForm();
   }
+  // renderSimpleForm() {
+  //   const { form } = this.props;
+  //   const { getFieldDecorator } = form;
+  //   const { selectedRows } = this.state;
+  //   return (
+  //     <Form onSubmit={this.handleSearch} layout="inline">
+  //       <Row gutter={{ md: 8, lg: 24, xl: 48 }}>
+  //         <Col md={8} sm={24}>
+  //           <FormItem label="商品名称">
+  //             {getFieldDecorator('name')(<Input placeholder="请输入" />)}
+  //           </FormItem>
+  //         </Col>
+  //         <Col md={8} sm={24}>
+  //           <FormItem label="作者">
+  //             {getFieldDecorator('author')(<Input placeholder="请输入" />)}
+  //           </FormItem>
+  //         </Col>
+  //         <Col md={8} sm={24}>
+  //           <span className={styles.submitButtons}>
+  //             <Button type="primary" htmlType="submit">
+  //               查询
+  //             </Button>
+  //             <Button style={{ marginLeft: 8 }} onClick={this.handleFormReset}>
+  //               重置
+  //             </Button>
+  //             <Button
+  //               style={{ marginLeft: 8 }}
+  //               icon="plus"
+  //               type="primary"
+  //               onClick={() => this.handleEdit()}
+  //             >
+  //               新建
+  //             </Button>
+  //             {selectedRows.length > 0 && (
+  //               <span>
+  //                 <Button onClick={() => this.handleBatchDelete()} style={{ marginLeft: 8 }}>
+  //                   批量删除
+  //                 </Button>
+  //               </span>
+  //             )}
+  //             <a style={{ marginLeft: 8 }} onClick={this.toggleForm}>
+  //               展开 <Icon type="down" />
+  //             </a>
+  //           </span>
+  //         </Col>
+  //       </Row>
+  //     </Form>
+  //   );
+  // }
+
+  // renderAdvancedForm() {
+  //   const { form } = this.props;
+  //   const { getFieldDecorator } = form;
+  //   const { selectedRows } = this.state;
+  //   const rangeConfig = {
+  //     rules: [{ type: 'array' }],
+  //   };
+  //   return (
+  //     <Form onSubmit={this.handleSearch} layout="inline">
+  //       <Row gutter={{ md: 8, lg: 24, xl: 48 }}>
+  //         <Col md={8} sm={24}>
+  //           <FormItem label="商品名称">
+  //             {getFieldDecorator('name')(<Input placeholder="请输入" />)}
+  //           </FormItem>
+  //         </Col>
+  //         <Col md={8} sm={24}>
+  //           <FormItem label="作者">
+  //             {getFieldDecorator('author')(<Input placeholder="请输入" />)}
+  //           </FormItem>
+  //         </Col>
+  //         <Col md={8} sm={24}>
+  //           <FormItem label="出版社">
+  //             {getFieldDecorator('publisher')(<Input placeholder="请输入" />)}
+  //           </FormItem>
+  //         </Col>
+  //       </Row>
+  //       <Row gutter={{ md: 8, lg: 24, xl: 48 }}>
+  //         <Col md={8} sm={24}>
+  //           <FormItem label="出版日期">
+  //             {getFieldDecorator('publicationTime', rangeConfig)(
+  //               <RangePicker style={{ width: '100%' }} />
+  //             )}
+  //           </FormItem>
+  //         </Col>
+  //         <Col md={8} sm={24}>
+  //           <FormItem label="库存量">
+  //             {getFieldDecorator('inventory')(<InputNumber style={{ width: '100%' }} />)}
+  //           </FormItem>
+  //         </Col>
+  //         <Col md={8} sm={24}>
+  //           <span className={styles.submitButtons}>
+  //             <Button type="primary" htmlType="submit">
+  //               查询
+  //             </Button>
+  //             <Button style={{ marginLeft: 8 }} onClick={this.handleFormReset}>
+  //               重置
+  //             </Button>
+  //             <Button
+  //               style={{ marginLeft: 8 }}
+  //               icon="plus"
+  //               type="primary"
+  //               onClick={() => this.handleEdit()}
+  //             >
+  //               新建
+  //             </Button>
+  //             {selectedRows.length > 0 && (
+  //               <span>
+  //                 <Button onClick={() => this.handleBatchDelete()} style={{ marginLeft: 8 }}>
+  //                   批量删除
+  //                 </Button>
+  //               </span>
+  //             )}
+  //             <a style={{ marginLeft: 8 }} onClick={this.toggleForm}>
+  //               收起 <Icon type="up" />
+  //             </a>
+  //           </span>
+  //         </Col>
+  //       </Row>
+  //     </Form>
+  //   );
+  // }
+
+  // renderForm() {
+  //   const { expandForm } = this.state;
+  //   return expandForm ? this.renderAdvancedForm() : this.renderSimpleForm();
+  // }
 
   render() {
     const {
@@ -327,6 +462,14 @@ export default class Product extends PureComponent {
       {
         title: '商品名称',
         dataIndex: 'name',
+        render: (val, record) => (
+          <a
+            href="javascript:void(0);"
+            onClick={() => this.handleDetail(record._id, record.categoryId)}
+          >
+            {val}
+          </a>
+        ),
       },
       {
         title: '价格',
@@ -386,8 +529,6 @@ export default class Product extends PureComponent {
               修改
             </a>
             <Divider type="vertical" />
-            {/* <a href="javascript:void(0);" onClick={() => this.handleDelete(record._id)}>删除</a>
-            <Divider type="vertical" /> */}
             <a href="javascript:void(0);" onClick={() => this.handleDelete(record._id)}>
               删除
             </a>

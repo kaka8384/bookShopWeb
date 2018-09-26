@@ -6,47 +6,48 @@ import {
   Col,
   Card,
   Form,
-  Icon,
   Input,
-  InputNumber,
   Button,
-  message,
-  Divider,
   DatePicker,
+  message,
+  Icon,
+  Select,
+  Dropdown,
+  Menu,
 } from 'antd';
 import StandardTable from 'components/StandardTable';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 
 import styles from './table.less';
 
-const { RangePicker } = DatePicker;
 const FormItem = Form.Item;
+const { RangePicker } = DatePicker;
+const { Option } = Select;
 const getValue = obj =>
   Object.keys(obj)
     .map(key => obj[key])
     .join(',');
 
-@connect(({ product, category, loading }) => ({
-  product,
-  category,
-  loading: loading.models.product,
+@connect(({ customer, loading }) => ({
+  customer,
+  loading: loading.models.customer,
 }))
 @Form.create()
-export default class Product extends PureComponent {
+export default class Customer extends PureComponent {
   state = {
+    expandForm: false,
     selectedRows: [],
     formValues: {},
-    expandForm: false,
   };
 
   componentDidMount() {
     const { dispatch } = this.props;
     dispatch({
-      type: 'product/fetch',
+      type: 'customer/fetch',
     });
   }
 
-  // 更改表排序、页数等
+  //  更改表排序、页数等
   handleStandardTableChange = (pagination, filtersArg, sorter) => {
     const { dispatch } = this.props;
     const { formValues } = this.state;
@@ -55,7 +56,7 @@ export default class Product extends PureComponent {
       const newObj = { ...obj };
       newObj[key] = getValue(filtersArg[key]);
       return newObj;
-    }, {}); // 表格上的筛选查询
+    }, {}); //  表格上的筛选查询
 
     const params = {
       currentPage: pagination.current,
@@ -63,25 +64,17 @@ export default class Product extends PureComponent {
       ...formValues,
       ...filters,
     };
+
     if (sorter.field) {
       params.sorter = `${sorter.field}_${sorter.order}`;
     }
 
     dispatch({
-      type: 'product/fetch',
+      type: 'customer/fetch',
       payload: params,
     });
   };
 
-  // 展开
-  toggleForm = () => {
-    const { expandForm } = this.state;
-    this.setState({
-      expandForm: !expandForm,
-    });
-  };
-
-  // 重置
   handleFormReset = () => {
     const { form, dispatch } = this.props;
     form.resetFields();
@@ -89,12 +82,11 @@ export default class Product extends PureComponent {
       formValues: {},
     });
     dispatch({
-      type: 'product/fetch',
+      type: 'customer/fetch',
       payload: {},
     });
   };
 
-  // 选择行
   handleSelectRows = rows => {
     this.setState({
       selectedRows: rows,
@@ -108,77 +100,108 @@ export default class Product extends PureComponent {
 
     form.validateFields((err, fieldsValue) => {
       if (err) return;
-
       const values = {
         ...fieldsValue,
       };
-      if (values.publicationTime) {
-        // 出版时间查询
+      if (values.brithDay) {
+        // 生日查询
         Object.assign(values, {
-          publicationTime_S: values.publicationTime[0].format('YYYY-MM-DD'),
+          brithDayStart: values.brithDay[0].format('YYYY-MM-DD'),
         });
         Object.assign(values, {
-          publicationTime_E: values.publicationTime[1].format('YYYY-MM-DD'),
+          brithDayEnd: values.brithDay[1].format('YYYY-MM-DD'),
         });
-        Object.assign(values, { publicationTime: undefined });
+        Object.assign(values, { brithDay: undefined });
       }
       this.setState({
         formValues: values,
       });
+
       dispatch({
-        type: 'product/fetch',
+        type: 'customer/fetch',
         payload: values,
       });
     });
   };
 
-  //  商品编辑
-  handleEdit = id => {
+  // 展开
+  toggleForm = () => {
+    const { expandForm } = this.state;
+    this.setState({
+      expandForm: !expandForm,
+    });
+  };
+
+  handleMenuClick = e => {
     const { dispatch } = this.props;
-    if (id) {
-      dispatch({
-        type: 'product/fetchOne',
-        payload: { id, type: 'edit' },
-      });
-    } else {
-      dispatch({
-        type: 'product/clearItem',
-      });
+    const { selectedRows } = this.state;
+
+    if (!selectedRows) return;
+
+    switch (e.key) {
+      case 'batchOpen':
+        dispatch({
+          type: 'customer/batchopen',
+          payload: {
+            customerIds: selectedRows.map(row => row._id).join(','),
+          },
+          callback: () => {
+            this.setState({
+              selectedRows: [],
+            });
+          },
+        });
+        message.success('批量启用成功');
+        break;
+      case 'batchCancel':
+        dispatch({
+          type: 'customer/batchcancel',
+          payload: {
+            customerIds: selectedRows.map(row => row._id).join(','),
+          },
+          callback: () => {
+            this.setState({
+              selectedRows: [],
+            });
+          },
+        });
+        message.success('批量禁用成功');
+        break;
+      default:
+        break;
     }
   };
 
-  //  商品详情
-  handleDetail = (id, cid) => {
+  handleCancel = customerId => {
     const { dispatch } = this.props;
     dispatch({
-      type: 'category/fetchOne',
-      payload: cid,
-    });
-    dispatch({
-      type: 'product/fetchOne',
-      payload: { id, type: 'detail' },
-    });
-  };
-
-  handleDelete = id => {
-    const { dispatch } = this.props;
-    dispatch({
-      type: 'product/remove',
+      type: 'customer/cancel',
       payload: {
-        pid: id,
+        customerId: customerId,
       },
     });
-    message.success('删除成功');
+    message.success('禁用成功');
   };
 
-  handleBatchDelete = () => {
+  handleOpen = customerId => {
+    const { dispatch } = this.props;
+    dispatch({
+      type: 'customer/open',
+      payload: {
+        customerId: customerId,
+      },
+    });
+    message.success('启用成功');
+  };
+
+  handleBatchCancel = () => {
     const { dispatch } = this.props;
     const { selectedRows } = this.state;
     if (!selectedRows) return;
     dispatch({
-      type: 'product/batchremove',
+      type: 'customer/batchcancel',
       payload: {
-        productIds: selectedRows.map(row => row._id).join(','),
+        issueIds: selectedRows.map(row => row._id).join(','),
       },
       callback: () => {
         this.setState({
@@ -193,17 +216,23 @@ export default class Product extends PureComponent {
     const { form } = this.props;
     const { getFieldDecorator } = form;
     const { selectedRows } = this.state;
+    const menu = (
+      <Menu onClick={this.handleMenuClick} selectedKeys={[]}>
+        <Menu.Item key="batchOpen">批量启用</Menu.Item>
+        <Menu.Item key="batchCancel">批量禁用</Menu.Item>
+      </Menu>
+    );
     return (
       <Form onSubmit={this.handleSearch} layout="inline">
         <Row gutter={{ md: 8, lg: 24, xl: 48 }}>
           <Col md={8} sm={24}>
-            <FormItem label="商品名称">
-              {getFieldDecorator('name')(<Input placeholder="请输入" />)}
+            <FormItem label="用户名">
+              {getFieldDecorator('username')(<Input placeholder="请输入" />)}
             </FormItem>
           </Col>
           <Col md={8} sm={24}>
-            <FormItem label="作者">
-              {getFieldDecorator('author')(<Input placeholder="请输入" />)}
+            <FormItem label="手机号码">
+              {getFieldDecorator('mobile')(<Input placeholder="请输入" />)}
             </FormItem>
           </Col>
           <Col md={8} sm={24}>
@@ -214,19 +243,13 @@ export default class Product extends PureComponent {
               <Button style={{ marginLeft: 8 }} onClick={this.handleFormReset}>
                 重置
               </Button>
-              <Button
-                style={{ marginLeft: 8 }}
-                icon="plus"
-                type="primary"
-                onClick={() => this.handleEdit()}
-              >
-                新建
-              </Button>
               {selectedRows.length > 0 && (
                 <span>
-                  <Button onClick={() => this.handleBatchDelete()} style={{ marginLeft: 8 }}>
-                    批量删除
-                  </Button>
+                  <Dropdown overlay={menu}>
+                    <Button>
+                      批量操作 <Icon type="down" />
+                    </Button>
+                  </Dropdown>
                 </span>
               )}
               <a style={{ marginLeft: 8 }} onClick={this.toggleForm}>
@@ -242,7 +265,6 @@ export default class Product extends PureComponent {
   renderAdvancedForm() {
     const { form } = this.props;
     const { getFieldDecorator } = form;
-    const { selectedRows } = this.state;
     const rangeConfig = {
       rules: [{ type: 'array' }],
     };
@@ -250,32 +272,13 @@ export default class Product extends PureComponent {
       <Form onSubmit={this.handleSearch} layout="inline">
         <Row gutter={{ md: 8, lg: 24, xl: 48 }}>
           <Col md={8} sm={24}>
-            <FormItem label="商品名称">
-              {getFieldDecorator('name')(<Input placeholder="请输入" />)}
+            <FormItem label="用户名">
+              {getFieldDecorator('username')(<Input placeholder="请输入" />)}
             </FormItem>
           </Col>
           <Col md={8} sm={24}>
-            <FormItem label="作者">
-              {getFieldDecorator('author')(<Input placeholder="请输入" />)}
-            </FormItem>
-          </Col>
-          <Col md={8} sm={24}>
-            <FormItem label="出版社">
-              {getFieldDecorator('publisher')(<Input placeholder="请输入" />)}
-            </FormItem>
-          </Col>
-        </Row>
-        <Row gutter={{ md: 8, lg: 24, xl: 48 }}>
-          <Col md={8} sm={24}>
-            <FormItem label="出版日期">
-              {getFieldDecorator('publicationTime', rangeConfig)(
-                <RangePicker style={{ width: '100%' }} />
-              )}
-            </FormItem>
-          </Col>
-          <Col md={8} sm={24}>
-            <FormItem label="库存量">
-              {getFieldDecorator('inventory')(<InputNumber style={{ width: '100%' }} />)}
+            <FormItem label="手机号码">
+              {getFieldDecorator('mobile')(<Input placeholder="请输入" />)}
             </FormItem>
           </Col>
           <Col md={8} sm={24}>
@@ -286,25 +289,38 @@ export default class Product extends PureComponent {
               <Button style={{ marginLeft: 8 }} onClick={this.handleFormReset}>
                 重置
               </Button>
-              <Button
-                style={{ marginLeft: 8 }}
-                icon="plus"
-                type="primary"
-                onClick={() => this.handleEdit()}
-              >
-                新建
-              </Button>
-              {selectedRows.length > 0 && (
-                <span>
-                  <Button onClick={() => this.handleBatchDelete()} style={{ marginLeft: 8 }}>
-                    批量删除
-                  </Button>
-                </span>
-              )}
               <a style={{ marginLeft: 8 }} onClick={this.toggleForm}>
                 收起 <Icon type="up" />
               </a>
             </span>
+          </Col>
+        </Row>
+        <Row gutter={{ md: 8, lg: 24, xl: 48 }}>
+          <Col md={8} sm={24}>
+            <FormItem label="昵称">
+              {getFieldDecorator('nickname')(<Input placeholder="请输入" />)}
+            </FormItem>
+          </Col>
+          <Col md={8} sm={24}>
+            <FormItem label="生日">
+              {getFieldDecorator('brithDay', rangeConfig)(
+                <RangePicker style={{ width: '100%' }} />
+              )}
+            </FormItem>
+          </Col>
+          <Col md={8} sm={24}>
+            <FormItem label="是否可用">
+              {getFieldDecorator('isActive')(
+                <Select style={{ width: '100%' }}>
+                  <Option key="op1" value="true">
+                    是
+                  </Option>
+                  <Option key="op2" value="false">
+                    否
+                  </Option>
+                </Select>
+              )}
+            </FormItem>
           </Col>
         </Row>
       </Form>
@@ -318,66 +334,46 @@ export default class Product extends PureComponent {
 
   render() {
     const {
-      product: { data },
+      customer: { data },
       loading,
     } = this.props;
     const { selectedRows } = this.state;
+
     const columns = [
       {
-        title: '商品名称',
-        dataIndex: 'name',
-        render: (val, record) => (
-          <a
-            href="javascript:void(0);"
-            onClick={() => this.handleDetail(record._id, record.categoryId)}
-          >
-            {val}
-          </a>
-        ),
-      },
-      {
-        title: '价格',
-        dataIndex: 'price.$numberDecimal',
+        title: '用户名',
+        dataIndex: 'username',
         sorter: true,
       },
       {
-        title: '作者',
-        dataIndex: 'bookAttribute.author',
+        title: '手机号码',
+        dataIndex: 'mobile',
       },
       {
-        title: '出版社',
-        dataIndex: 'bookAttribute.publisher',
-      },
-      {
-        title: '出版日期',
-        dataIndex: 'bookAttribute.publicationTime',
-        sorter: true,
-        render: val => <span>{moment(val).format('YYYY-MM-DD')}</span>,
-      },
-      {
-        title: '库存',
-        dataIndex: 'inventory',
-      },
-      {
-        title: '销量',
-        dataIndex: 'salesCount',
+        title: '客户昵称',
+        dataIndex: 'nickname',
         sorter: true,
       },
       {
-        title: '在售',
+        title: '性别',
+        dataIndex: 'gender',
+        sorter: true,
+        render: val => <span>{val === 'M' ? '男' : '女'}</span>,
+      },
+      {
+        title: '生日',
+        dataIndex: 'brithDay',
+        sorter: true,
+        render: val => <span>{val ? moment(val).format('YYYY-MM-DD') : ''}</span>,
+      },
+      {
+        title: '邮箱',
+        dataIndex: 'mail',
+      },
+      {
+        title: '是否可用',
         dataIndex: 'isActive',
         render: val => <span>{val ? '是' : '否'}</span>,
-        filters: [
-          {
-            text: '是',
-            value: true,
-          },
-          {
-            text: '否',
-            value: false,
-          },
-        ],
-        filterMultiple: false,
       },
       {
         title: '更新时间',
@@ -389,13 +385,15 @@ export default class Product extends PureComponent {
         title: '操作',
         render: (text, record) => (
           <Fragment>
-            <a href="javascript:void(0);" onClick={() => this.handleEdit(record._id)}>
-              修改
-            </a>
-            <Divider type="vertical" />
-            <a href="javascript:void(0);" onClick={() => this.handleDelete(record._id)}>
-              删除
-            </a>
+            {record.isActive ? (
+              <a href="javascript:void(0);" onClick={() => this.handleCancel(record._id)}>
+                注销
+              </a>
+            ) : (
+              <a href="javascript:void(0);" onClick={() => this.handleOpen(record._id)}>
+                启用
+              </a>
+            )}
           </Fragment>
         ),
       },
@@ -418,25 +416,7 @@ export default class Product extends PureComponent {
             />
           </div>
         </Card>
-        {/* <CreateForm
-          {...parentMethods}
-          modalVisible={modalVisible}
-          modalTitle={modalTitle}
-          updateData={updateData}
-          fileList={fileList}
-          defaultFileList={defaultFileList}
-          category={category}
-        /> */}
       </PageHeaderLayout>
     );
   }
 }
-// function GetImages(files) {
-//   const fileArray = [];
-//   files.fileList.forEach(item => {
-//     if (item.status === 'done' && item.response.success) {
-//       fileArray.push(item.response.url);
-//     }
-//   });
-//   return fileArray;
-// }

@@ -194,6 +194,9 @@ export default class BasicLayout extends React.PureComponent {
         type: 'login/logout',
       });
     }
+    if (key === 'updatePassword') {
+      dispatch(routerRedux.push('/system/updatePassword'));
+    }
   };
 
   handleNoticeVisibleChange = visible => {

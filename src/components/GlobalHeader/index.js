@@ -1,49 +1,13 @@
 import React, { PureComponent } from 'react';
 import { Menu, Icon, Spin, Dropdown, Avatar, Divider } from 'antd';
-// import moment from 'moment';
-// import groupBy from 'lodash/groupBy';
 import Debounce from 'lodash-decorators/debounce';
 import { Link } from 'dva/router';
-// import NoticeIcon from '../NoticeIcon';
-import HeaderSearch from '../HeaderSearch';
 import styles from './index.less';
 
 export default class GlobalHeader extends PureComponent {
   componentWillUnmount() {
     this.triggerResizeEvent.cancel();
   }
-
-  // getNoticeData() {
-  //   const { notices } = this.props;
-  //   if (notices == null || notices.length === 0) {
-  //     return {};
-  //   }
-  //   const newNotices = notices.map(notice => {
-  //     const newNotice = { ...notice };
-  //     if (newNotice.datetime) {
-  //       newNotice.datetime = moment(notice.datetime).fromNow();
-  //     }
-  //     // transform id to item key
-  //     if (newNotice.id) {
-  //       newNotice.key = newNotice.id;
-  //     }
-  //     if (newNotice.extra && newNotice.status) {
-  //       const color = {
-  //         todo: '',
-  //         processing: 'blue',
-  //         urgent: 'red',
-  //         doing: 'gold',
-  //       }[newNotice.status];
-  //       newNotice.extra = (
-  //         <Tag color={color} style={{ marginRight: 0 }}>
-  //           {newNotice.extra}
-  //         </Tag>
-  //       );
-  //     }
-  //     return newNotice;
-  //   });
-  //   return groupBy(newNotices, 'type');
-  // }
 
   toggle = () => {
     const { collapsed, onCollapse } = this.props;
@@ -58,34 +22,24 @@ export default class GlobalHeader extends PureComponent {
     window.dispatchEvent(event);
   }
   render() {
-    const {
-      currentUser = {},
-      collapsed,
-      // fetchingNotices,
-      isMobile,
-      logo,
-      // onNoticeVisibleChange,
-      onMenuClick,
-      // onNoticeClear,
-    } = this.props;
+    const { currentUser = {}, collapsed, isMobile, logo, onMenuClick } = this.props;
     const menu = (
       <Menu className={styles.menu} selectedKeys={[]} onClick={onMenuClick}>
         {/* <Menu.Item>
-          <Icon type="user" />个人中心
+          <Icon type="user" />个人中心updatePassword
         </Menu.Item> */}
-        <Menu.Item>
-          <Icon type="setting" key="updatePassword" />修改密码
+        <Menu.Item key="updatePassword">
+          <Icon type="setting" key="updatePassword" />
+          修改密码
         </Menu.Item>
-        {/* <Menu.Item key="triggerError">
-          <Icon type="close-circle" />触发报错
-        </Menu.Item> */}
         <Menu.Divider />
         <Menu.Item key="logout">
-          <Icon type="logout" />退出登录
+          <Icon type="logout" />
+          退出登录
         </Menu.Item>
       </Menu>
     );
-    // const noticeData = this.getNoticeData();
+
     return (
       <div className={styles.header}>
         {isMobile && [
@@ -100,7 +54,7 @@ export default class GlobalHeader extends PureComponent {
           onClick={this.toggle}
         />
         <div className={styles.right}>
-          <HeaderSearch
+          {/* <HeaderSearch
             className={`${styles.action} ${styles.search}`}
             placeholder="站内搜索"
             dataSource={['搜索提示一', '搜索提示二', '搜索提示三']}
@@ -110,7 +64,7 @@ export default class GlobalHeader extends PureComponent {
             onPressEnter={value => {
               console.log('enter', value); // eslint-disable-line
             }}
-          />
+          /> */}
           {currentUser.name ? (
             <Dropdown overlay={menu}>
               <span className={`${styles.action} ${styles.account}`}>

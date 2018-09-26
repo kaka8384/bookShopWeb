@@ -75,19 +75,8 @@ export const getRouterData = app => {
       component: dynamicWrapper(app, ['user', 'login'], () => import('../layouts/BasicLayout')),
     },
     '/dashboard/analysis': {
-      component: dynamicWrapper(app, ['chart'], () => import('../routes/Dashboard/Analysis')),
+      component: dynamicWrapper(app, ['analysis'], () => import('../routes/Dashboard/Analysis')),
     },
-    // '/dashboard/monitor': {
-    //   component: dynamicWrapper(app, ['monitor'], () => import('../routes/Dashboard/Monitor')),
-    // },
-    // '/dashboard/workplace': {
-    //   component: dynamicWrapper(app, ['project', 'activities', 'chart'], () =>
-    //     import('../routes/Dashboard/Workplace')
-    //   ),
-    //   // hideInBreadcrumb: true,
-    //   // name: '工作台',
-    //   // authority: 'admin',
-    // },
     '/bussiness/category': {
       component: dynamicWrapper(app, ['category'], () => import('../routes/Bussiness/Category')),
     },
@@ -116,18 +105,18 @@ export const getRouterData = app => {
         import('../routes/Bussiness/Product_Issue')
       ),
     },
-    '/list/search': {
-      component: dynamicWrapper(app, ['list'], () => import('../routes/List/List')),
+    '/bussiness/customer': {
+      component: dynamicWrapper(app, ['customer'], () => import('../routes/Bussiness/Customer')),
     },
-    // '/list/search/projects': {
-    //   component: dynamicWrapper(app, ['list'], () => import('../routes/List/Projects')),
-    // },
-    // '/list/search/applications': {
-    //   component: dynamicWrapper(app, ['list'], () => import('../routes/List/Applications')),
-    // },
-    // '/list/search/articles': {
-    //   component: dynamicWrapper(app, ['list'], () => import('../routes/List/Articles')),
-    // },
+    '/bussiness/order': {
+      component: dynamicWrapper(app, ['order'], () => import('../routes/Bussiness/Order')),
+    },
+    '/system/user': {
+      component: dynamicWrapper(app, ['user'], () => import('../routes/System/User')),
+    },
+    '/system/updatePassword': {
+      component: dynamicWrapper(app, ['user'], () => import('../routes/System/UpdatePassword')),
+    },
     '/result/success': {
       component: dynamicWrapper(app, [], () => import('../routes/Result/Success')),
     },
@@ -154,15 +143,6 @@ export const getRouterData = app => {
     '/user/login': {
       component: dynamicWrapper(app, ['login'], () => import('../routes/User/Login')),
     },
-    '/user/register': {
-      component: dynamicWrapper(app, ['register'], () => import('../routes/User/Register')),
-    },
-    '/user/register-result': {
-      component: dynamicWrapper(app, [], () => import('../routes/User/RegisterResult')),
-    },
-    // '/user/:id': {
-    //   component: dynamicWrapper(app, [], () => import('../routes/User/SomeComponent')),
-    // },
   };
   // Get name from ./menu.js or just set it in the router data.
   const menuData = getFlatMenuData(getMenuData());

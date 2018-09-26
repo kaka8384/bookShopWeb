@@ -11,6 +11,11 @@ module.exports = {
   },
   rules: {
     camelcase: 0,
+    'class-methods-use-this': 0,
+    'react/jsx-indent': 0,
+    'react/sort-comp': 0,
+    'react/jsx-boolean-value': 0,
+    'no-param-reassign': 0,
     'no-unneeded-ternary': 0,
     'prefer-destructuring': 0,
     'default-case': 0,

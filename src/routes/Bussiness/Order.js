@@ -1,4 +1,4 @@
-import React, { PureComponent, Fragment } from 'react';
+﻿import React, { PureComponent, Fragment } from 'react';
 import { connect } from 'dva';
 import moment from 'moment';
 import {
@@ -149,6 +149,18 @@ export default class Order extends PureComponent {
     message.success('发货成功');
   };
 
+  handleConfirm = orderId => {
+    const { dispatch } = this.props;
+    dispatch({
+      type: 'order/update',
+      payload: {
+        orderId: orderId,
+        status: 2,
+      },
+    });
+    message.success('订单确认成功');
+  };
+
   onDrawerClose = () => {
     this.setState({
       orderdetail: {},
@@ -190,7 +202,7 @@ export default class Order extends PureComponent {
                     已提交
                   </Option>
                   <Option key="op3" value="2">
-                    已付款
+                    已确认
                   </Option>
                   <Option key="op4" value="3">
                     已出库
@@ -245,7 +257,7 @@ export default class Order extends PureComponent {
                     已提交
                   </Option>
                   <Option key="op3" value="2">
-                    已付款
+                    已确认
                   </Option>
                   <Option key="op4" value="3">
                     已出库
@@ -403,15 +415,7 @@ export default class Order extends PureComponent {
       {
         title: '操作',
         render: (text, record) => (
-          <Fragment>
-            {record.lastStatus === 2 ? (
-              <a href="javascript:void(0);" onClick={() => this.handleSend(record._id)}>
-                发货
-              </a>
-            ) : (
-              ''
-            )}
-          </Fragment>
+          <Fragment>{this.getCotrol(record.lastStatus, record._id)}</Fragment>
         ),
       },
     ];
@@ -503,12 +507,31 @@ export default class Order extends PureComponent {
     );
   }
 
+  getCotrol(status, oid) {
+    switch (status) {
+      case 2:
+        return (
+          <a href="javascript:void(0);" onClick={() => this.handleSend(oid)}>
+            发货
+          </a>
+        );
+      case 1:
+        return (
+          <a href="javascript:void(0);" onClick={() => this.handleConfirm(oid)}>
+            确认
+          </a>
+        );
+      default:
+        return '';
+    }
+  }
+
   getOrderStatus(status) {
     switch (status) {
       case 1:
         return '已提交';
       case 2:
-        return '已付款';
+        return '已确认';
       case 3:
         return '已出库';
       case 4:

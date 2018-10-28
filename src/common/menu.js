@@ -33,10 +33,10 @@ const menuData = [
         name: '评论管理',
         path: 'product_comment',
       },
-      {
-        name: '问答管理',
-        path: 'product_issue',
-      },
+      // {
+      //   name: '问答管理',
+      //   path: 'product_issue',
+      // },
       {
         name: '客户管理',
         path: 'customer',
